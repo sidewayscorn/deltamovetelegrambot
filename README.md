@@ -1,4 +1,4 @@
-<p align="center"> <img src="https://github.com/sidewayscorn/deltamovetelegrambot/blob/master/screenshot.PNG?raw=true" width="350" height="385"/> <br><img src="https://github.com/sidewayscorn/deltamovetelegrambot/blob/master/screenshot2.png?raw=true" width="350" height="630"/> </p>
+<p align="center"> <img src="https://github.com/sidewayscorn/deltamovetelegrambot/blob/master/screenshot1.PNG?raw=true" width="350" height="385"/> <br><img src="https://github.com/sidewayscorn/deltamovetelegrambot/blob/master/screenshot2.PNG?raw=true" width="350" height="630"/> </p>
 
 
 Requirements:
