@@ -6,5 +6,5 @@ Requirements:
 - [Python](https://www.python.org/downloads/)
 - [Delta Exchange Python Client](https://github.com/delta-exchange/python-rest-client)
 - [Python-Telegram-Bot](https://github.com/python-telegram-bot/python-telegram-bot)
-- Matplotlib
-- Pillow/PIL
+- [Matplotlib](https://github.com/matplotlib/matplotlib)
+- [Pillow/PIL](https://github.com/python-pillow/Pillow)
