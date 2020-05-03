@@ -52,8 +52,9 @@ dispatcher.add_handler(start_handler)
 
 def position(update, context):
     position_details = delta_client.get_position(p_id)
-    context.bot.send_message(chat_id=update.effective_chat.id, text='<code>Size:'+str(position_details['size'])+'\nEntry Price:'+(position_details['entry_price'])+'\nMargin:'+(position_details['margin'])+'\nLiquidation Price:'+(position_details['liquidation_price'])+'\nADL Level:'+str(position_details['adl_level'])+'\nAuto Top Up:'+str(position_details['auto_topup'])+'\nPremium:'+(position_details['realized_pnl'])+'</code>',parse_mode=telegram.ParseMode.HTML)
-
+    Premium = float(position_details['entry_price']) * abs(position_details['size']) * float(position_details['product']['contract_value'])
+    context.bot.send_message(chat_id=update.effective_chat.id, text='<code>Size:'+str(position_details['size'])+'\nEntry Price:'+(position_details['entry_price'])+'\nMargin:'+(position_details['margin'])+'\nLiquidation Price:'+(position_details['liquidation_price'])+'\nADL Level:'+str(position_details['adl_level'])+'\nAuto Top Up:'+str(position_details['auto_topup'])+'\nPremium:'+ Premium +'</code>',parse_mode=telegram.ParseMode.HTML)
+    
 from telegram.ext import CommandHandler
 start_handler = CommandHandler('position', position)
 dispatcher.add_handler(start_handler)
