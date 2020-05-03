@@ -4,7 +4,8 @@ import matplotlib
 import matplotlib.pyplot as plt
 import re
 import io
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
+import random
 updater = Updater(token='TELEGRAM BOT API TOKEN', use_context=True)
 
 dispatcher = updater.dispatcher
@@ -33,6 +34,7 @@ result = re.search(pattern, json.dumps(products, indent=2))
 for i in json.loads(json.dumps(products)):
     if i['symbol'] == "MV-BTC-D"+ result.group(1):
         p_id=(i['id'])
+        contract_name = i['symbol']
         break
 
 def start(update, context):
@@ -54,7 +56,7 @@ def position(update, context):
     position_details = delta_client.get_position(p_id)
     Premium = float(position_details['entry_price']) * abs(position_details['size']) * float(position_details['product']['contract_value'])
     context.bot.send_message(chat_id=update.effective_chat.id, text='<code>Size:'+str(position_details['size'])+'\nEntry Price:'+(position_details['entry_price'])+'\nMargin:'+(position_details['margin'])+'\nLiquidation Price:'+(position_details['liquidation_price'])+'\nADL Level:'+str(position_details['adl_level'])+'\nAuto Top Up:'+str(position_details['auto_topup'])+'\nPremium:'+ Premium +'</code>',parse_mode=telegram.ParseMode.HTML)
-    
+
 from telegram.ext import CommandHandler
 start_handler = CommandHandler('position', position)
 dispatcher.add_handler(start_handler)
@@ -128,7 +130,7 @@ def orders(update, context):
                             context.bot.send_message(chat_id=update.effective_chat.id, text="<code>Order Type: " + str(i['stop_order_type']) + "\nStop Price: " + str(i['stop_price']) +  "\nSide: " + str(i['side'])+"\nSize: " + str(i['size']) + "\nUnfilled Size: " + str(i['unfilled_size']) + "\nExecution Price: " + str(i['avg_fill_price']) + "</code>",parse_mode=telegram.ParseMode.HTML)
                         else:
                             context.bot.send_message(chat_id=update.effective_chat.id, text="<code>Order Type: " + str(i['stop_order_type']) + "\nStop Price: " + str(i['stop_price']) + "\nLimit Price: " + str(i['limit_price']) + "\nSide: " + str(i['side'])+"\nSize: " + str(i['size']) + "\nUnfilled Size: " + str(i['unfilled_size']) + "\nExecution Price: " + str(i['avg_fill_price']) + "</code>",parse_mode=telegram.ParseMode.HTML)
-                        
+
                     else:
                         if str(i['order_type'])=='market_order':
                             context.bot.send_message(chat_id=update.effective_chat.id, text="<code>Order Type: " + str(i['stop_order_type']) + "\nStop Price: " + str(i['stop_price']) +  "\nSide: " + str(i['side'])+"\nSize: " + str(i['size']) + "\nUnfilled Size: " + str(i['unfilled_size']) + "</code>",parse_mode=telegram.ParseMode.HTML)
@@ -141,15 +143,15 @@ def orders(update, context):
                             context.bot.send_message(chat_id=update.effective_chat.id, text="<code>\nOrder Type:"+ str(i['order_type']) +  "\nSide: " + str(i['side'])+"\nSize: " + str(i['size']) + "\nUnfilled Size: " + str(i['unfilled_size']) + "\nExecution Price: " + str(i['avg_fill_price']) + "</code>",parse_mode=telegram.ParseMode.HTML)
                         else:
                             context.bot.send_message(chat_id=update.effective_chat.id, text="<code>\nOrder Type:"+ str(i['order_type']) + "\nLimit Price: " + str(i['limit_price']) + "\nSide: " + str(i['side'])+"\nSize: " + str(i['size']) + "\nUnfilled Size: " + str(i['unfilled_size']) + "\nExecution Price: " + str(i['avg_fill_price']) + "</code>",parse_mode=telegram.ParseMode.HTML)
-                            
-                        
+
+
                     else:
-                        if if str(i['order_type'])=='market_order':
+                        if str(i['order_type'])=='market_order':
                             context.bot.send_message(chat_id=update.effective_chat.id, text="<code>\nOrder Type:"+ str(i['order_type']) +  "\nSide: " + str(i['side'])+"\nSize: " + str(i['size']) + "\nUnfilled Size: " + str(i['unfilled_size']) + "</code>",parse_mode=telegram.ParseMode.HTML)
                         else:
                             context.bot.send_message(chat_id=update.effective_chat.id, text="<code>\nOrder Type:"+ str(i['order_type']) + "\nLimit Price: " + str(i['limit_price']) + "\nSide: " + str(i['side'])+"\nSize: " + str(i['size']) + "\nUnfilled Size: " + str(i['unfilled_size']) + "</code>",parse_mode=telegram.ParseMode.HTML)
-                            
-                        
+
+
 
                 j+=1
 
@@ -158,6 +160,80 @@ from telegram.ext import CommandHandler
 start_handler = CommandHandler('orders', orders)
 dispatcher.add_handler(start_handler)
 
+def PNL(update, context):
+    position_details = delta_client.get_position(p_id)
+    depth = delta_client.get_L2_orders(p_id)
+
+    Premium = float(position_details['entry_price']) * abs(position_details['size']) * float(position_details['product']['contract_value'])
+    Payoff = float(position_details['size']) * float(depth['mark_price']) * float(position_details['product']['contract_value'])
+    Capital = float(position_details['entry_price']) - Premium
+    PNL = Premium + Payoff
+    ROE = '%.2f' % ((PNL/Capital)*1000)
+
+    #Buy/Sell and Contract Name
+    font3= ImageFont.truetype('/fonts/Arial/ariblk.ttf', 35) #These paths worked for a windows machine with default fonts, things might be different on linux or mac
+    if float(position_details['size'])>0:
+        side = 'BUY'
+    else:
+        side = 'SELL'
+    text3 = side + ' | ' + contract_name
+
+
+    if float(ROE)>0 and float(ROE)>25 and side=='BUY':
+        image = Image.open(r'FULL PATH OF IMAGE DIRECTORY\templates\long.jpg')
+    elif float(ROE)>30:
+        image = Image.open(r'FULL PATH OF IMAGE DIRECTORY\templates\profit.jpg')
+    elif float(ROE)<0 and abs(ROE)>20:
+        image = Image.open(r'FULL PATH OF IMAGE DIRECTORY\templates\loss.jpg')
+    else:
+        image = Image.open(r'FULL PATH OF IMAGE DIRECTORY\templates\waiting.jpg')
+
+    draw = ImageDraw.Draw(image)
+    draw.text((100, 300), text3, font = font3, fill=(238,222,31), align ="center")
+
+    font1 = ImageFont.truetype('/fonts/Arial/arialbd.ttf', 40)
+    text1 = 'MY PNL/ROE'
+    draw.text((100, 50), text1, font = font1, fill=(217,214,213), align ="center")
+
+    #ROE% Text
+    font2= ImageFont.truetype('/fonts/Arial/arialbd.ttf', 100)
+    if float(ROE)>0:
+        text2 = '+ ' + str(ROE) + ' %'
+        draw.text((100, 150), text2, font = font2, fill=(9,231,46), align ="center")
+    else:
+        text2 = '- ' + str(ROE) + ' %'
+        draw.text((100, 150), text2, font = font2, fill=(254,13,1), align ="center")
+
+
+    #Entry Price
+    font4= ImageFont.truetype('/fonts/Arial/ariblk.ttf', 30)
+    text4 = 'Entry Price\n' + str('%.2f' % float((position_details['entry_price'])))
+    draw.text((700, 300), text4, font = font4, fill=(217,214,213), align ="center")
+
+    #Random Text
+    font5= ImageFont.truetype('/fonts/Arial/ariblk.ttf', 20)
+    
+    #More random texts can be added here. I will add more things related to BTC Volatility in next update.
+
+    text5i = "The bollinger bands automatically widen\nwhen volatility increases and contract\nwhen volatility decreases"
+    text5ii = "34.82% of Mondays are within -1% to 1% moves in BTC"
+    text5iii = "Daily close, Weekly Close and CME contracts expiry\nare most of the times volatile"
+    random_list = [text5i, text5ii]
+    random_num = random.choice(random_list)
+    text5 = str(random_num)
+    draw.text((125, 600), text5, font = font5, fill=(212,212,212), align ="left")
+
+    #Referral code
+    font6= ImageFont.truetype('/fonts/Arial/arialbd.ttf', 25)
+    text6 = 'REFERRAL CODE: ' + 'BLGNHE' #Replace with your REFERRAL CODE
+    draw.text((550, 1000), text6, font = font6, fill=(147,189,184), align ="center")
+
+    image = image.save('pnlimage.png')
+    context.bot.send_photo(chat_id=update.effective_chat.id, photo=open('pnlimage.png', 'rb'))
+
+from telegram.ext import CommandHandler
+start_handler = CommandHandler('PNL', PNL)
+dispatcher.add_handler(start_handler)
 
 
 updater.start_polling()
