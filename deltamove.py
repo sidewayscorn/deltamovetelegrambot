@@ -123,15 +123,32 @@ def orders(update, context):
             if i['product']['id'] == p_id:
                 if (i['stop_price']!=None):
                     if (i['size']>i['unfilled_size']):
-                        context.bot.send_message(chat_id=update.effective_chat.id, text="<code>Order Type: " + str(i['stop_order_type']) + "\nStop Price: " + str(i['stop_price']) + "\nLimit Price: " + str(i['limit_price']) + "\nSide: " + str(i['side'])+"\nSize: " + str(i['size']) + "\nUnfilled Size: " + str(i['unfilled_size']) + "\nExecution Price: " + str(i['avg_fill_price']) + "</code>",parse_mode=telegram.ParseMode.HTML)
+                        if str(i['order_type'])=='market_order':
+                            context.bot.send_message(chat_id=update.effective_chat.id, text="<code>Order Type: " + str(i['stop_order_type']) + "\nStop Price: " + str(i['stop_price']) +  "\nSide: " + str(i['side'])+"\nSize: " + str(i['size']) + "\nUnfilled Size: " + str(i['unfilled_size']) + "\nExecution Price: " + str(i['avg_fill_price']) + "</code>",parse_mode=telegram.ParseMode.HTML)
+                        else:
+                            context.bot.send_message(chat_id=update.effective_chat.id, text="<code>Order Type: " + str(i['stop_order_type']) + "\nStop Price: " + str(i['stop_price']) + "\nLimit Price: " + str(i['limit_price']) + "\nSide: " + str(i['side'])+"\nSize: " + str(i['size']) + "\nUnfilled Size: " + str(i['unfilled_size']) + "\nExecution Price: " + str(i['avg_fill_price']) + "</code>",parse_mode=telegram.ParseMode.HTML)
+                        
                     else:
-                        context.bot.send_message(chat_id=update.effective_chat.id, text="<code>Order Type: " + str(i['stop_order_type']) + "\nStop Price: " + str(i['stop_price']) + "\nLimit Price: " + str(i['limit_price']) + "\nSide: " + str(i['side'])+"\nSize: " + str(i['size']) + "\nUnfilled Size: " + str(i['unfilled_size']) + "</code>",parse_mode=telegram.ParseMode.HTML)
+                        if str(i['order_type'])=='market_order':
+                            context.bot.send_message(chat_id=update.effective_chat.id, text="<code>Order Type: " + str(i['stop_order_type']) + "\nStop Price: " + str(i['stop_price']) +  "\nSide: " + str(i['side'])+"\nSize: " + str(i['size']) + "\nUnfilled Size: " + str(i['unfilled_size']) + "</code>",parse_mode=telegram.ParseMode.HTML)
+                        else:
+                            context.bot.send_message(chat_id=update.effective_chat.id, text="<code>Order Type: " + str(i['stop_order_type']) + "\nStop Price: " + str(i['stop_price']) + "\nLimit Price: " + str(i['limit_price']) + "\nSide: " + str(i['side'])+"\nSize: " + str(i['size']) + "\nUnfilled Size: " + str(i['unfilled_size']) + "</code>",parse_mode=telegram.ParseMode.HTML)
 
                 else:
                     if (i['size']>i['unfilled_size']):
-                        context.bot.send_message(chat_id=update.effective_chat.id, text="<code>\nOrder Type:"+ str(i['order_type']) + "\nLimit Price: " + str(i['limit_price']) + "\nSide: " + str(i['side'])+"\nSize: " + str(i['size']) + "\nUnfilled Size: " + str(i['unfilled_size']) + "\nExecution Price: " + str(i['avg_fill_price']) + "</code>",parse_mode=telegram.ParseMode.HTML)
+                        if str(i['order_type'])=='market_order':
+                            context.bot.send_message(chat_id=update.effective_chat.id, text="<code>\nOrder Type:"+ str(i['order_type']) +  "\nSide: " + str(i['side'])+"\nSize: " + str(i['size']) + "\nUnfilled Size: " + str(i['unfilled_size']) + "\nExecution Price: " + str(i['avg_fill_price']) + "</code>",parse_mode=telegram.ParseMode.HTML)
+                        else:
+                            context.bot.send_message(chat_id=update.effective_chat.id, text="<code>\nOrder Type:"+ str(i['order_type']) + "\nLimit Price: " + str(i['limit_price']) + "\nSide: " + str(i['side'])+"\nSize: " + str(i['size']) + "\nUnfilled Size: " + str(i['unfilled_size']) + "\nExecution Price: " + str(i['avg_fill_price']) + "</code>",parse_mode=telegram.ParseMode.HTML)
+                            
+                        
                     else:
-                        context.bot.send_message(chat_id=update.effective_chat.id, text="<code>\nOrder Type:"+ str(i['order_type']) + "\nLimit Price: " + str(i['limit_price']) + "\nSide: " + str(i['side'])+"\nSize: " + str(i['size']) + "\nUnfilled Size: " + str(i['unfilled_size']) + "</code>",parse_mode=telegram.ParseMode.HTML)
+                        if if str(i['order_type'])=='market_order':
+                            context.bot.send_message(chat_id=update.effective_chat.id, text="<code>\nOrder Type:"+ str(i['order_type']) +  "\nSide: " + str(i['side'])+"\nSize: " + str(i['size']) + "\nUnfilled Size: " + str(i['unfilled_size']) + "</code>",parse_mode=telegram.ParseMode.HTML)
+                        else:
+                            context.bot.send_message(chat_id=update.effective_chat.id, text="<code>\nOrder Type:"+ str(i['order_type']) + "\nLimit Price: " + str(i['limit_price']) + "\nSide: " + str(i['side'])+"\nSize: " + str(i['size']) + "\nUnfilled Size: " + str(i['unfilled_size']) + "</code>",parse_mode=telegram.ParseMode.HTML)
+                            
+                        
 
                 j+=1
 
@@ -139,6 +156,7 @@ def orders(update, context):
 from telegram.ext import CommandHandler
 start_handler = CommandHandler('orders', orders)
 dispatcher.add_handler(start_handler)
+
 
 
 updater.start_polling()
