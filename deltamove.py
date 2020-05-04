@@ -183,7 +183,7 @@ def PNL(update, context):
         image = Image.open(r'FULL PATH OF IMAGE DIRECTORY\templates\long.jpg')
     elif float(ROE)>30:
         image = Image.open(r'FULL PATH OF IMAGE DIRECTORY\templates\profit.jpg')
-    elif float(ROE)<0 and abs(ROE)>20:
+    elif float(ROE)<0 and abs(float(ROE))>20:
         image = Image.open(r'FULL PATH OF IMAGE DIRECTORY\templates\loss.jpg')
     else:
         image = Image.open(r'FULL PATH OF IMAGE DIRECTORY\templates\waiting.jpg')
@@ -201,7 +201,7 @@ def PNL(update, context):
         text2 = '+ ' + str(ROE) + ' %'
         draw.text((100, 150), text2, font = font2, fill=(9,231,46), align ="center")
     else:
-        text2 = '- ' + str(ROE) + ' %'
+        text2 = str(ROE) + ' %'
         draw.text((100, 150), text2, font = font2, fill=(254,13,1), align ="center")
 
 
