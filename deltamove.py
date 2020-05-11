@@ -55,7 +55,7 @@ dispatcher.add_handler(start_handler)
 def position(update, context):
     position_details = delta_client.get_position(p_id)
     Premium = float(position_details['entry_price']) * abs(position_details['size']) * float(position_details['product']['contract_value'])
-    context.bot.send_message(chat_id=update.effective_chat.id, text='<code>Size:'+str(position_details['size'])+'\nEntry Price:'+(position_details['entry_price'])+'\nMargin:'+(position_details['margin'])+'\nLiquidation Price:'+(position_details['liquidation_price'])+'\nADL Level:'+str(position_details['adl_level'])+'\nAuto Top Up:'+str(position_details['auto_topup'])+'\nPremium:'+ Premium +'</code>',parse_mode=telegram.ParseMode.HTML)
+    context.bot.send_message(chat_id=update.effective_chat.id, text='<code>Size:'+str(position_details['size'])+'\nEntry Price:'+str(position_details['entry_price'])+'\nMargin:'+str(position_details['margin'])+'\nLiquidation Price:'+str(position_details['liquidation_price'])+'\nADL Level:'+str(position_details['adl_level'])+'\nAuto Top Up:'+str(position_details['auto_topup'])+'\nPremium:'+ str(Premium) +'</code>',parse_mode=telegram.ParseMode.HTML)
 
 from telegram.ext import CommandHandler
 start_handler = CommandHandler('position', position)
@@ -164,19 +164,24 @@ def PNL(update, context):
     position_details = delta_client.get_position(p_id)
     depth = delta_client.get_L2_orders(p_id)
 
-    Premium = float(position_details['entry_price']) * abs(position_details['size']) * float(position_details['product']['contract_value'])
-    Payoff = float(position_details['size']) * float(depth['mark_price']) * float(position_details['product']['contract_value'])
-    Capital = float(position_details['entry_price']) - Premium
-    PNL = Premium + Payoff
-    ROE = '%.2f' % ((PNL/Capital)*1000)
-
     #Buy/Sell and Contract Name
-    font3= ImageFont.truetype('/fonts/Arial/ariblk.ttf', 35) #These paths worked for a windows machine with default fonts, things might be different on linux or mac
+    font3= ImageFont.truetype('/fonts/Arial/ariblk.ttf', 35)
     if float(position_details['size'])>0:
         side = 'BUY'
     else:
         side = 'SELL'
     text3 = side + ' | ' + contract_name
+
+    Premium = float(position_details['entry_price']) * abs(position_details['size']) * float(position_details['product']['contract_value'])
+    Payoff = float(position_details['size']) * float(depth['mark_price']) * float(position_details['product']['contract_value'])
+    Capital = float(position_details['entry_price']) - Premium
+
+    if side == 'BUY':
+        PNL = Payoff - Premium
+    else:
+        PNL = Payoff + Premium
+        
+    ROE = '%.2f' % ((PNL/Capital)*1000)
 
 
     if float(ROE)>0 and float(ROE)>25 and side=='BUY':
