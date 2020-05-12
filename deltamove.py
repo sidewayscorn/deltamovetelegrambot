@@ -41,7 +41,7 @@ def start(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="<code>I'm a bot to help you trade BTC Move Options on Delta Exchange!</code>",parse_mode=telegram.ParseMode.HTML)
 
 from telegram.ext import CommandHandler
-start_handler = CommandHandler('start', start)
+start_handler = CommandHandler('start', start, Filters.user(username="@username"))
 dispatcher.add_handler(start_handler)
 
 def info(update, context):
@@ -49,7 +49,7 @@ def info(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text='<code>'+(product['description'])+'\nSymbol:'+(product['symbol'])+'\n\nSettlement Time:'+(product['settlement_time'])+'\nSTRIKE PRICE:'+(product['strike_price'])+'\n\nMaintenance Margin:'+(product['maintenance_margin'])+'\nContract Value:'+(product['contract_value'])+'\nContract Unit Currency:'+(product['contract_unit_currency'])+'\nMaker Commission Rate:'+(product['maker_commission_rate'])+'</code>', parse_mode=telegram.ParseMode.HTML)
 
 from telegram.ext import CommandHandler
-start_handler = CommandHandler('info', info)
+start_handler = CommandHandler('info', info, Filters.user(username="@username"))
 dispatcher.add_handler(start_handler)
 
 def position(update, context):
@@ -58,7 +58,7 @@ def position(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text='<code>Size:'+str(position_details['size'])+'\nEntry Price:'+str(position_details['entry_price'])+'\nMargin:'+str(position_details['margin'])+'\nLiquidation Price:'+str(position_details['liquidation_price'])+'\nADL Level:'+str(position_details['adl_level'])+'\nAuto Top Up:'+str(position_details['auto_topup'])+'\nPremium:'+ str(Premium) +'</code>',parse_mode=telegram.ParseMode.HTML)
 
 from telegram.ext import CommandHandler
-start_handler = CommandHandler('position', position)
+start_handler = CommandHandler('position', position, Filters.user(username="@username"))
 dispatcher.add_handler(start_handler)
 
 def orderbook(update, context):
@@ -109,7 +109,7 @@ def orderbook(update, context):
 
 
 from telegram.ext import CommandHandler
-start_handler = CommandHandler('orderbook', orderbook)
+start_handler = CommandHandler('orderbook', orderbook, Filters.user(username="@username"))
 dispatcher.add_handler(start_handler)
 
 def orders(update, context):
@@ -157,7 +157,7 @@ def orders(update, context):
 
 
 from telegram.ext import CommandHandler
-start_handler = CommandHandler('orders', orders)
+start_handler = CommandHandler('orders', orders, Filters.user(username="@username"))
 dispatcher.add_handler(start_handler)
 
 def PNL(update, context):
@@ -237,7 +237,7 @@ def PNL(update, context):
     context.bot.send_photo(chat_id=update.effective_chat.id, photo=open('pnlimage.png', 'rb'))
 
 from telegram.ext import CommandHandler
-start_handler = CommandHandler('PNL', PNL)
+start_handler = CommandHandler('PNL', PNL, Filters.user(username="@username"))
 dispatcher.add_handler(start_handler)
 
 
