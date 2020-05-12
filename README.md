@@ -12,8 +12,6 @@ Requirements:
 Few things that I will add in next update:
 
 - PNL/ROE with a chart
-- Delete the image after sending to telegram from system when created for depth chart
-- Restrict the bot to reply only to one ID
 - Better exception handling in overall code
 - Wait message dislayed while the bot executes the command
 - Twitter integration
