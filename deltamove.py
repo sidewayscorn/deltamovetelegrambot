@@ -1,5 +1,5 @@
 import telegram
-from telegram.ext import Updater
+from telegram.ext import Updater, Filters
 import matplotlib
 import matplotlib.pyplot as plt
 import re
