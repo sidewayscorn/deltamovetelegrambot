@@ -9,9 +9,8 @@ Requirements:
 - [Matplotlib](https://github.com/matplotlib/matplotlib)
 - [Pillow/PIL](https://github.com/python-pillow/Pillow)
 
-Few things that I will add in next update:
+Not working on this project anymore, few things that can be improved if someone decides to fork it:
 
-- PNL/ROE with a chart
+- PNL/ROE with a price chart
 - Better exception handling in overall code
 - Wait message dislayed while the bot executes the command
-- Twitter integration
